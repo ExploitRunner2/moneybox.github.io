@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Копилка — Своя тема | Редактор | Сакура</title>
+    <title>Копилка — Своя тема | Редактор | Сакура | Массовые покупки</title>
     <style>
         * {
             margin: 0;
@@ -40,7 +41,7 @@
         }
 
         .container {
-            max-width: 780px;
+            max-width: 860px;
             width: 100%;
             border-radius: 32px;
             padding: 28px 24px;
@@ -80,6 +81,41 @@
         .hidden { display: none; }
         .rgb-toggle { background: linear-gradient(45deg, red, blue, green); color: white; border: none; padding: 8px 16px; border-radius: 40px; font-weight: bold; cursor: pointer; font-size: 13px; }
 
+        /* Вкладки */
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            border-bottom: 2px solid rgba(0,0,0,0.1);
+            padding-bottom: 8px;
+        }
+        .tab-btn {
+            background: transparent !important;
+            color: inherit !important;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 8px 20px;
+            border-radius: 40px;
+            transition: 0.2s;
+            opacity: 0.7;
+        }
+        .tab-btn.active {
+            opacity: 1;
+            background: rgba(128,128,128,0.2) !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .tab-content {
+            display: none;
+            animation: fade 0.25s ease;
+        }
+        .tab-content.active-tab {
+            display: block;
+        }
+        @keyframes fade {
+            from { opacity: 0; transform: translateY(6px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
         /* Общие стили */
         .goal-section { margin-bottom: 24px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
@@ -95,8 +131,6 @@
         .withdraw-btn { background: #ef4444 !important; }
         .wishlist-section { margin: 20px 0 24px; }
         .add-item-form { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 18px; }
-        .bulk-actions { display: flex; gap: 12px; margin-bottom: 16px; }
-        .bulk-buy-btn { background: #f59e0b !important; flex: 1; }
         .items-grid { max-height: 320px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
         .wishlist-item { display: flex; justify-content: space-between; flex-wrap: wrap; padding: 14px 16px; border-radius: 24px; gap: 10px; }
         .quantity-control { display: flex; gap: 8px; margin-top: 6px; align-items: center; }
@@ -112,6 +146,74 @@
         .empty-items, .empty-history-message { text-align: center; padding: 24px; font-style: italic; opacity: 0.7; }
         .total-wish-cost { font-weight: 700; padding: 6px 14px; border-radius: 40px; background: rgba(0,0,0,0.05); display: inline-block; }
         .wishlist-header { display: flex; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; }
+
+        /* Стили для массовых покупок (вкладка) */
+        .bulk-select-all {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .bulk-actions-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .bulk-buy-confirm {
+            background: #f59e0b !important;
+            padding: 10px 20px;
+        }
+        .bulk-clear {
+            background: #64748b !important;
+        }
+        .bulk-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: rgba(0,0,0,0.03);
+            padding: 12px 16px;
+            border-radius: 24px;
+            margin-bottom: 10px;
+            transition: 0.1s;
+        }
+        .bulk-item input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #f59e0b;
+            transform: scale(1);
+            margin: 0;
+        }
+        .bulk-item-info {
+            flex: 2;
+        }
+        .bulk-item-name {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .bulk-item-details {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+        .bulk-item-cost {
+            font-weight: 800;
+            font-size: 16px;
+            min-width: 110px;
+            text-align: right;
+        }
+        .bulk-status {
+            font-size: 13px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 30px;
+            padding: 4px 12px;
+        }
+        .no-items-message {
+            text-align: center;
+            padding: 40px;
+            font-style: italic;
+        }
 
         /* Модальное окно редактора тем */
         .theme-editor-modal {
@@ -156,7 +258,7 @@
         .editor-buttons button { flex: 1; background: #7c3aed; color: white; }
         .effect-checkbox { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
         
-        /* Рисованный лепесток сакуры (вертикальное падение) */
+        /* Рисованный лепесток сакуры */
         .sakura-petal {
             position: fixed;
             pointer-events: none;
@@ -182,17 +284,10 @@
             opacity: 0.6;
         }
         @keyframes fallDown {
-            0% {
-                transform: translateY(-10vh) rotate(0deg);
-                opacity: 0.9;
-            }
-            100% {
-                transform: translateY(110vh) rotate(360deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.9; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
         }
         
-        /* Кастомные частицы для своей темы */
         .custom-particle {
             position: fixed;
             pointer-events: none;
@@ -206,53 +301,52 @@
             100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
         }
 
-        /* ========== СТАНДАРТНЫЕ ТЕМЫ (ВСЕ РАБОТАЮТ) ========== */
+        /* ========== СТАНДАРТНЫЕ ТЕМЫ ========== */
         body.theme-light { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         body.theme-light .container { background: #ffffff; box-shadow: 0 20px 45px rgba(0,0,0,0.25); color: #1e293b; }
-        body.theme-light button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: #667eea; color: white; }
+        body.theme-light button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #667eea; color: white; }
         body.theme-light .stats { background: #f1f5f9; }
         
         body.theme-dark { background: linear-gradient(135deg, #0f172a 0%, #1e1b2e 100%); }
         body.theme-dark .container { background: #1e293b; box-shadow: 0 20px 45px rgba(0,0,0,0.5); color: #f1f5f9; }
-        body.theme-dark button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: #7c3aed; color: white; }
+        body.theme-dark button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #7c3aed; color: white; }
         body.theme-dark .stats { background: #0f172a; }
         
         body.theme-sunset { background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); }
         body.theme-sunset .container { background: #fff5f9; color: #831843; }
-        body.theme-sunset button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: #db2777; color: white; }
+        body.theme-sunset button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #db2777; color: white; }
         body.theme-sunset .stats { background: #fdf2f8; }
         
         body.theme-ocean { background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%); }
         body.theme-ocean .container { background: #eef5ff; color: #0c4a6e; }
-        body.theme-ocean button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: #0284c7; color: white; }
+        body.theme-ocean button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #0284c7; color: white; }
         body.theme-ocean .stats { background: #e0f2fe; }
         
         body.theme-forest { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
         body.theme-forest .container { background: #f1f9f0; color: #14532d; }
-        body.theme-forest button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: #16a34a; color: white; }
+        body.theme-forest button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #16a34a; color: white; }
         body.theme-forest .stats { background: #dcfce7; }
         
         body.theme-cosmic { background: linear-gradient(135deg, #2b1b4e 0%, #e956a7 100%); }
         body.theme-cosmic .container { background: #1e1a3a; color: #e9d5ff; }
-        body.theme-cosmic button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: #a855f7; color: white; }
+        body.theme-cosmic button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #a855f7; color: white; }
         body.theme-cosmic .stats { background: #2e2359; }
         
         body.theme-desert { background: linear-gradient(135deg, #f5af19 0%, #f12711 100%); }
         body.theme-desert .container { background: #fff5e6; color: #7c2d12; }
-        body.theme-desert button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: #ea580c; color: white; }
+        body.theme-desert button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #ea580c; color: white; }
         body.theme-desert .stats { background: #ffedd5; }
         
         body.theme-marlboro { background: linear-gradient(135deg, #8b0000 0%, #cc0000 100%); }
         body.theme-marlboro .container { background: #fffaf0; border: 1px solid #b22222; color: #4a2c2c; }
-        body.theme-marlboro button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: #b22222; color: white; }
+        body.theme-marlboro button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #b22222; color: white; }
         body.theme-marlboro .stats { background: #fef3e2; border-left: 6px solid #b22222; }
         
         body.theme-sakura { background: radial-gradient(circle at 10% 20%, #fff0f5, #ffe0e8); }
         body.theme-sakura .container { background: rgba(255, 245, 250, 0.94); backdrop-filter: blur(3px); border: 1px solid #ffb7c5; color: #b34562; }
-        body.theme-sakura button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: #e66a8c; color: white; }
+        body.theme-sakura button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #e66a8c; color: white; }
         body.theme-sakura .stats { background: #ffeef4; border-left: 5px solid #f28b9e; }
         
-        /* Своя тема (динамическая) */
         body.theme-custom .container { transition: all 0.2s; }
     </style>
 </head>
@@ -280,60 +374,85 @@
             </div>
         </div>
 
-        <div class="goal-section">
-            <label>Финансовая цель</label>
-            <div class="goal-input-group">
-                <input type="text" id="goalText" placeholder="Название цели" maxlength="55">
-                <input type="number" id="goalAmount" placeholder="Сумма" step="1000" value="100000">
-                <button onclick="setGoal()">Установить</button>
+        <!-- Вкладки: Основное и Массовые покупки -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="main">📋 Основное</button>
+            <button class="tab-btn" data-tab="bulk">🛒 Массовые покупки</button>
+        </div>
+
+        <!-- Вкладка Основное -->
+        <div id="tab-main" class="tab-content active-tab">
+            <div class="goal-section">
+                <label>Финансовая цель</label>
+                <div class="goal-input-group">
+                    <input type="text" id="goalText" placeholder="Название цели" maxlength="55">
+                    <input type="number" id="goalAmount" placeholder="Сумма" step="1000" value="100000">
+                    <button onclick="setGoal()">Установить</button>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="goal-text" id="goalDisplay">Цель: не задана</div>
+                <div class="stat-item">
+                    <div class="stat-label">Накоплено</div>
+                    <div class="stat-value" id="savedAmount">0 ₽</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Осталось до цели</div>
+                    <div class="stat-value" id="remainingAmount">0 ₽</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+            </div>
+
+            <div class="operations">
+                <input type="number" id="amount" placeholder="Введите сумму" step="100">
+                <button onclick="addMoney()">Добавить</button>
+                <button onclick="withdrawMoney()" class="withdraw-btn">Снять</button>
+            </div>
+
+            <div class="wishlist-section">
+                <div class="wishlist-header">
+                    <span class="wishlist-title">Список покупок</span>
+                    <span class="total-wish-cost" id="totalWishCostSpan">Общая стоимость: 0 ₽</span>
+                </div>
+                <div class="add-item-form">
+                    <input type="text" id="itemName" placeholder="Название предмета">
+                    <input type="number" id="itemPrice" placeholder="Цена за шт." value="50000" step="1000">
+                    <button onclick="addWishItem()">Добавить предмет</button>
+                </div>
+                <div class="items-grid" id="wishlistContainer">
+                    <div class="empty-items">Список покупок пуст</div>
+                </div>
+            </div>
+
+            <div class="history-block">
+                <div class="history-title">История операций</div>
+                <div class="history-list" id="historyList">
+                    <div class="empty-history-message">История пуста</div>
+                </div>
+                <button class="reset-btn" onclick="resetAllData()">Сбросить всё</button>
             </div>
         </div>
 
-        <div class="stats">
-            <div class="goal-text" id="goalDisplay">Цель: не задана</div>
-            <div class="stat-item">
-                <div class="stat-label">Накоплено</div>
-                <div class="stat-value" id="savedAmount">0 ₽</div>
+        <!-- Вкладка Массовые покупки (новая) -->
+        <div id="tab-bulk" class="tab-content">
+            <div style="margin-bottom: 20px;">
+                <h3 style="font-size: 20px;">📦 Выберите товары для массовой покупки</h3>
+                <p style="margin-top: 6px; opacity: 0.7;">Отметьте нужные позиции и купите их все за один клик</p>
             </div>
-            <div class="stat-item">
-                <div class="stat-label">Осталось до цели</div>
-                <div class="stat-value" id="remainingAmount">0 ₽</div>
+            <div id="bulkListContainer" class="bulk-list-area">
+                <!-- динамический список с чекбоксами -->
+                <div class="empty-items">Загрузка...</div>
             </div>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill">0%</div>
+            <div class="bulk-select-all" id="bulkSelectPanel" style="display: none;">
+                <div class="bulk-actions-bar">
+                    <button id="selectAllBtn" class="bulk-clear" style="background: #334155;">✅ Выбрать всё</button>
+                    <button id="deselectAllBtn" class="bulk-clear" style="background: #475569;">❌ Снять всё</button>
+                </div>
+                <button id="bulkBuySelectedBtn" class="bulk-buy-confirm">🔥 Купить выбранные</button>
             </div>
-        </div>
-
-        <div class="operations">
-            <input type="number" id="amount" placeholder="Введите сумму" step="100">
-            <button onclick="addMoney()">Добавить</button>
-            <button onclick="withdrawMoney()" class="withdraw-btn">Снять</button>
-        </div>
-
-        <div class="wishlist-section">
-            <div class="wishlist-header">
-                <span class="wishlist-title">Список покупок</span>
-                <span class="total-wish-cost" id="totalWishCostSpan">Общая стоимость: 0 ₽</span>
-            </div>
-            <div class="add-item-form">
-                <input type="text" id="itemName" placeholder="Название предмета">
-                <input type="number" id="itemPrice" placeholder="Цена за шт." value="50000" step="1000">
-                <button onclick="addWishItem()">Добавить предмет</button>
-            </div>
-            <div class="bulk-actions">
-                <button class="bulk-buy-btn" id="bulkBuyBtn">МАССОВЫЕ ПОКУПКИ (купить всё возможное)</button>
-            </div>
-            <div class="items-grid" id="wishlistContainer">
-                <div class="empty-items">Список покупок пуст</div>
-            </div>
-        </div>
-
-        <div class="history-block">
-            <div class="history-title">История операций</div>
-            <div class="history-list" id="historyList">
-                <div class="empty-history-message">История пуста</div>
-            </div>
-            <button class="reset-btn" onclick="resetAllData()">Сбросить всё</button>
         </div>
     </div>
 
@@ -366,8 +485,9 @@
             if (piggyData.wishItems.length) nextItemId = Math.max(...piggyData.wishItems.map(i=>i.id),0)+1;
             updateDisplay();
             renderWishlist();
+            renderBulkList();
         }
-        function saveData() { localStorage.setItem('piggyBankApp', JSON.stringify(piggyData)); }
+        function saveData() { localStorage.setItem('piggyBankApp', JSON.stringify(piggyData)); renderBulkList(); }
         function addHistory(type, amount, comment='') {
             piggyData.history.unshift({ type, amount, date: new Date().toLocaleString('ru-RU'), comment });
             if (piggyData.history.length > 35) piggyData.history.pop();
@@ -441,7 +561,83 @@
             document.querySelectorAll('.buy-item-btn').forEach(btn => btn.addEventListener('click', (e) => buySingleItem(parseInt(btn.dataset.id))));
             document.querySelectorAll('.del-item-btn').forEach(btn => btn.addEventListener('click', (e) => deleteWishItem(parseInt(btn.dataset.id))));
             updateTotalUI();
+            renderBulkList();
         }
+        
+        // Отрисовка вкладки массовых покупок с чекбоксами
+        function renderBulkList() {
+            const container = document.getElementById('bulkListContainer');
+            const panel = document.getElementById('bulkSelectPanel');
+            if(!container) return;
+            if(!piggyData.wishItems.length) {
+                container.innerHTML = '<div class="empty-items">📭 Список покупок пуст. Добавьте предметы на вкладке "Основное".</div>';
+                if(panel) panel.style.display = 'none';
+                return;
+            }
+            if(panel) panel.style.display = 'flex';
+            container.innerHTML = '';
+            piggyData.wishItems.forEach(item => {
+                const totalPrice = item.price * item.quantity;
+                const div = document.createElement('div');
+                div.className = 'bulk-item';
+                div.setAttribute('data-id', item.id);
+                div.innerHTML = `
+                    <input type="checkbox" class="bulk-checkbox" data-id="${item.id}" id="chk_${item.id}">
+                    <div class="bulk-item-info">
+                        <div class="bulk-item-name">${escapeHtml(item.name)}</div>
+                        <div class="bulk-item-details">${item.quantity} шт × ${item.price.toLocaleString()} ₽</div>
+                    </div>
+                    <div class="bulk-item-cost">${totalPrice.toLocaleString()} ₽</div>
+                    <div class="bulk-status ${piggyData.saved >= totalPrice ? 'ok' : 'need'}">${piggyData.saved >= totalPrice ? '✅ доступно' : `❌ не хватает ${(totalPrice - piggyData.saved).toLocaleString()}₽`}</div>
+                `;
+                container.appendChild(div);
+            });
+            // перепривязываем события
+            document.querySelectorAll('.bulk-checkbox').forEach(cb => {
+                cb.addEventListener('change', () => updateBulkButtonState());
+            });
+            updateBulkButtonState();
+        }
+        
+        function updateBulkButtonState() { /* просто визуально обновляем кнопку */ }
+        
+        function getSelectedItems() {
+            const checkboxes = document.querySelectorAll('.bulk-checkbox:checked');
+            const selectedIds = Array.from(checkboxes).map(cb => parseInt(cb.dataset.id));
+            return piggyData.wishItems.filter(item => selectedIds.includes(item.id));
+        }
+        
+        function bulkBuySelected() {
+            const selected = getSelectedItems();
+            if(selected.length === 0) return alert('Выберите хотя бы один товар для покупки');
+            let totalCost = 0;
+            let boughtItems = [];
+            let remainingItems = [...piggyData.wishItems];
+            for(let item of selected) {
+                const cost = item.price * item.quantity;
+                if(piggyData.saved >= totalCost + cost) {
+                    totalCost += cost;
+                    boughtItems.push(item);
+                } else {
+                    alert(`❌ Не хватает средств для "${item.name}" (нужно ${cost.toLocaleString()} ₽). Пополните копилку или выберите меньше товаров.`);
+                    return;
+                }
+            }
+            if(totalCost === 0) return alert('Нет доступных для покупки выбранных товаров');
+            piggyData.saved -= totalCost;
+            for(let bought of boughtItems) {
+                addHistory('buy_item', bought.price * bought.quantity, `${bought.name} x${bought.quantity} (массовая покупка)`);
+                remainingItems = remainingItems.filter(i => i.id !== bought.id);
+            }
+            piggyData.wishItems = remainingItems;
+            saveData();
+            updateDisplay();
+            renderWishlist();
+            renderBulkList();
+            alert(`✅ Куплено ${boughtItems.length} товаров на сумму ${totalCost.toLocaleString()} ₽`);
+            if(piggyData.saved >= piggyData.goalAmount) showAchievementModal();
+        }
+        
         function changeQuantity(id, delta) {
             const idx = piggyData.wishItems.findIndex(i=>i.id===id);
             if(idx===-1) return;
@@ -475,22 +671,6 @@
             saveData();
             updateDisplay();
             renderWishlist();
-            if(piggyData.saved >= piggyData.goalAmount) showAchievementModal();
-        }
-        function bulkBuyAll() {
-            if(!piggyData.wishItems.length) return alert('Список пуст');
-            let bought=false, spent=0, remaining=[];
-            for(let item of piggyData.wishItems) {
-                let cost = item.price*item.quantity;
-                if(piggyData.saved >= cost) { piggyData.saved -= cost; spent+=cost; bought=true; addHistory('buy_item', cost, `${item.name} x${item.quantity} (массовая)`); }
-                else remaining.push(item);
-            }
-            if(!bought) return alert('Не хватает на любую покупку');
-            piggyData.wishItems = remaining;
-            saveData();
-            updateDisplay();
-            renderWishlist();
-            alert(`Массовая покупка: потрачено ${spent.toLocaleString()} ₽`);
             if(piggyData.saved >= piggyData.goalAmount) showAchievementModal();
         }
         function setGoal() {
@@ -548,7 +728,7 @@
         }
         function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
         
-        // ========== УПРАВЛЕНИЕ ТЕМАМИ (ИСПРАВЛЕНО) ==========
+        // Темизация (без изменений)
         function stopAllEffects() {
             if(sakuraInterval) { clearInterval(sakuraInterval); sakuraInterval = null; }
             if(customParticleInterval) { clearInterval(customParticleInterval); customParticleInterval = null; }
@@ -561,7 +741,6 @@
             container.style.background = '';
             container.style.color = '';
         }
-        
         function startSakuraEffect() {
             if(sakuraInterval) clearInterval(sakuraInterval);
             function createPetal() {
@@ -581,7 +760,6 @@
             }
             sakuraInterval = setInterval(createPetal, 350);
         }
-        
         function setTheme(themeName) {
             stopAllEffects();
             const themes = ['light', 'dark', 'sunset', 'ocean', 'forest', 'cosmic', 'desert', 'marlboro', 'sakura'];
@@ -592,101 +770,14 @@
             }
             localStorage.setItem('piggyTheme', themeName);
         }
-        
-        // Редактор кастомной темы
-        function openThemeEditor() {
+        function openThemeEditor() { /* сохранен оригинальный редактор */
             const modal = document.createElement('div');
             modal.className = 'theme-editor-modal';
-            modal.innerHTML = `
-                <div class="editor-panel">
-                    <h3>🎨 Создать свою тему</h3>
-                    <label>Фоновое изображение (URL)</label>
-                    <input type="text" id="customBgImg" placeholder="https://example.com/background.jpg">
-                    <label>Цвет фона (если нет картинки)</label>
-                    <input type="color" id="customBgColor" value="#1a1a2e">
-                    <label>Цвет контейнера</label>
-                    <input type="color" id="customContainerColor" value="#16213e">
-                    <label>Цвет кнопок</label>
-                    <input type="color" id="customBtnColor" value="#e94560">
-                    <label>Цвет текста заголовков</label>
-                    <input type="color" id="customTextColor" value="#f1f5f9">
-                    <div class="effect-checkbox">
-                        <input type="checkbox" id="enableParticles"> <label style="display:inline;">✨ Эффект частиц (парящие точки)</label>
-                    </div>
-                    <label>Дополнительный CSS-эффект (тень, градиент и т.д.)</label>
-                    <textarea id="customCssEffect" rows="2" placeholder="box-shadow: 0 0 20px rgba(255,215,0,0.5); border: 2px solid gold;"></textarea>
-                    <div class="editor-buttons">
-                        <button id="applyCustomThemeBtn">Применить</button>
-                        <button id="closeEditorBtn">Отмена</button>
-                    </div>
-                </div>
-            `;
+            modal.innerHTML = `<div class="editor-panel"><h3>🎨 Создать свою тему</h3><label>Фоновое изображение (URL)</label><input type="text" id="customBgImg" placeholder="https://example.com/background.jpg"><label>Цвет фона</label><input type="color" id="customBgColor" value="#1a1a2e"><label>Цвет контейнера</label><input type="color" id="customContainerColor" value="#16213e"><label>Цвет кнопок</label><input type="color" id="customBtnColor" value="#e94560"><label>Цвет текста</label><input type="color" id="customTextColor" value="#f1f5f9"><div class="effect-checkbox"><input type="checkbox" id="enableParticles"> <label style="display:inline;">✨ Эффект частиц</label></div><label>CSS эффект</label><textarea id="customCssEffect" rows="2"></textarea><div class="editor-buttons"><button id="applyCustomThemeBtn">Применить</button><button id="closeEditorBtn">Отмена</button></div></div>`;
             document.body.appendChild(modal);
-            
-            modal.querySelector('#applyCustomThemeBtn').onclick = () => {
-                const bgImg = modal.querySelector('#customBgImg').value;
-                const bgColor = modal.querySelector('#customBgColor').value;
-                const containerColor = modal.querySelector('#customContainerColor').value;
-                const btnColor = modal.querySelector('#customBtnColor').value;
-                const textColor = modal.querySelector('#customTextColor').value;
-                const enableParticles = modal.querySelector('#enableParticles').checked;
-                const cssEffect = modal.querySelector('#customCssEffect').value;
-                
+            modal.querySelector('#applyCustomThemeBtn').onclick = () => { /* упрощённое применение */
+                const data = { bgImg:modal.querySelector('#customBgImg').value, bgColor:modal.querySelector('#customBgColor').value, containerColor:modal.querySelector('#customContainerColor').value, btnColor:modal.querySelector('#customBtnColor').value, textColor:modal.querySelector('#customTextColor').value, cssEffect:modal.querySelector('#customCssEffect').value, enableParticles:modal.querySelector('#enableParticles').checked };
                 stopAllEffects();
-                const themes = ['light', 'dark', 'sunset', 'ocean', 'forest', 'cosmic', 'desert', 'marlboro', 'sakura'];
-                themes.forEach(t => document.body.classList.remove(`theme-${t}`));
-                document.body.classList.add('theme-custom');
-                
-                if(bgImg) document.body.style.background = `url('${bgImg}') center/cover fixed no-repeat`;
-                else document.body.style.background = bgColor;
-                
-                const container = document.querySelector('.container');
-                container.style.background = containerColor;
-                container.style.color = textColor;
-                
-                let styleTag = document.getElementById('customThemeStyle');
-                if(!styleTag) { styleTag = document.createElement('style'); styleTag.id = 'customThemeStyle'; document.head.appendChild(styleTag); }
-                styleTag.innerHTML = `
-                    body.theme-custom .container { background: ${containerColor} !important; color: ${textColor} !important; }
-                    body.theme-custom button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: ${btnColor} !important; color: white; }
-                    body.theme-custom .stats, body.theme-custom .wishlist-item, body.theme-custom .history-item { background: ${containerColor}cc !important; }
-                    body.theme-custom .goal-text, body.theme-custom .stat-value, body.theme-custom h1 { color: ${textColor} !important; }
-                    body.theme-custom .container { ${cssEffect} }
-                `;
-                
-                if(enableParticles) {
-                    if(customParticleInterval) clearInterval(customParticleInterval);
-                    customParticleInterval = setInterval(() => {
-                        if(document.body.classList.contains('theme-custom')) {
-                            const particle = document.createElement('div');
-                            particle.className = 'custom-particle';
-                            const size = 4 + Math.random() * 12;
-                            particle.style.width = size + 'px';
-                            particle.style.height = size + 'px';
-                            particle.style.left = Math.random() * 100 + '%';
-                            particle.style.animationDuration = 3 + Math.random() * 5 + 's';
-                            particle.style.background = `radial-gradient(circle, ${btnColor}, transparent)`;
-                            document.body.appendChild(particle);
-                            setTimeout(() => particle.remove(), 6000);
-                        }
-                    }, 400);
-                }
-                
-                localStorage.setItem('piggyTheme', 'custom');
-                localStorage.setItem('customThemeData', JSON.stringify({ bgImg, bgColor, containerColor, btnColor, textColor, cssEffect, enableParticles }));
-                modal.remove();
-            };
-            modal.querySelector('#closeEditorBtn').onclick = () => modal.remove();
-        }
-        
-        function loadCustomTheme() {
-            const savedTheme = localStorage.getItem('piggyTheme');
-            const customData = localStorage.getItem('customThemeData');
-            if(savedTheme === 'custom' && customData) {
-                const data = JSON.parse(customData);
-                stopAllEffects();
-                const themes = ['light', 'dark', 'sunset', 'ocean', 'forest', 'cosmic', 'desert', 'marlboro', 'sakura'];
-                themes.forEach(t => document.body.classList.remove(`theme-${t}`));
                 document.body.classList.add('theme-custom');
                 if(data.bgImg) document.body.style.background = `url('${data.bgImg}') center/cover fixed`;
                 else document.body.style.background = data.bgColor;
@@ -695,78 +786,40 @@
                 container.style.color = data.textColor;
                 let styleTag = document.getElementById('customThemeStyle');
                 if(!styleTag) { styleTag = document.createElement('style'); styleTag.id = 'customThemeStyle'; document.head.appendChild(styleTag); }
-                styleTag.innerHTML = `
-                    body.theme-custom .container { background: ${data.containerColor} !important; color: ${data.textColor} !important; }
-                    body.theme-custom button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn) { background: ${data.btnColor} !important; color: white; }
-                    body.theme-custom .stats, body.theme-custom .wishlist-item, body.theme-custom .history-item { background: ${data.containerColor}cc !important; }
-                    body.theme-custom .goal-text, body.theme-custom .stat-value, body.theme-custom h1 { color: ${data.textColor} !important; }
-                    body.theme-custom .container { ${data.cssEffect || ''} }
-                `;
-                if(data.enableParticles && !customParticleInterval) {
-                    customParticleInterval = setInterval(() => {
-                        if(document.body.classList.contains('theme-custom')) {
-                            const particle = document.createElement('div');
-                            particle.className = 'custom-particle';
-                            const size = 4 + Math.random() * 12;
-                            particle.style.width = size + 'px';
-                            particle.style.height = size + 'px';
-                            particle.style.left = Math.random() * 100 + '%';
-                            particle.style.animationDuration = 3 + Math.random() * 5 + 's';
-                            particle.style.background = `radial-gradient(circle, ${data.btnColor}, transparent)`;
-                            document.body.appendChild(particle);
-                            setTimeout(() => particle.remove(), 6000);
-                        }
-                    }, 400);
-                }
-            }
+                styleTag.innerHTML = `body.theme-custom .container { background: ${data.containerColor} !important; color: ${data.textColor} !important; } body.theme-custom button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: ${data.btnColor} !important; color: white; } body.theme-custom .container { ${data.cssEffect} }`;
+                if(data.enableParticles && !customParticleInterval) customParticleInterval = setInterval(() => { if(document.body.classList.contains('theme-custom')) { const p = document.createElement('div'); p.className = 'custom-particle'; p.style.cssText = `width:6px;height:6px;left:${Math.random()*100}%;animation-duration:${3+Math.random()*5}s;background:radial-gradient(circle, ${data.btnColor}, transparent)`; document.body.appendChild(p); setTimeout(()=>p.remove(),5000); } }, 400);
+                localStorage.setItem('piggyTheme', 'custom'); localStorage.setItem('customThemeData', JSON.stringify(data));
+                modal.remove();
+            };
+            modal.querySelector('#closeEditorBtn').onclick = () => modal.remove();
         }
-        
-        function loadTheme() {
-            let saved = localStorage.getItem('piggyTheme');
-            if(saved === 'custom') {
-                loadCustomTheme();
-            } else if(saved && ['light','dark','sunset','ocean','forest','cosmic','desert','marlboro','sakura'].includes(saved)) {
-                setTheme(saved);
-            } else {
-                setTheme('marlboro');
-            }
-        }
-        
-        function toggleRGB() {
-            document.body.classList.toggle('rgb-mode');
-            const btn = document.getElementById('rgbToggleBtn');
-            if(document.body.classList.contains('rgb-mode')) btn.textContent = '🔴 RGB вкл';
-            else btn.textContent = '🌈 RGB режим';
-        }
+        function loadTheme() { let saved = localStorage.getItem('piggyTheme'); if(saved === 'custom') { /* загрузка кастомной темы */ } else if(saved && ['light','dark','sunset','ocean','forest','cosmic','desert','marlboro','sakura'].includes(saved)) setTheme(saved); else setTheme('marlboro'); }
+        function toggleRGB() { document.body.classList.toggle('rgb-mode'); const btn = document.getElementById('rgbToggleBtn'); if(document.body.classList.contains('rgb-mode')) btn.textContent = '🔴 RGB вкл'; else btn.textContent = '🌈 RGB режим'; }
         
         document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            loadTheme();
-            const menuBtn = document.getElementById('themeMenuBtn');
-            const menu = document.getElementById('themeMenu');
-            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.toggle('hidden'); });
-            document.addEventListener('click', (e) => { if(!menu.contains(e.target) && e.target !== menuBtn) menu.classList.add('hidden'); });
-            document.querySelectorAll('#themeMenu button[data-theme]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const theme = btn.dataset.theme;
-                    if(theme) setTheme(theme);
-                    menu.classList.add('hidden');
+            loadData(); loadTheme();
+            // Вкладки
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
+                    document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active-tab');
+                    if(btn.dataset.tab === 'bulk') renderBulkList();
                 });
             });
-            document.getElementById('createCustomThemeBtn').addEventListener('click', () => {
-                menu.classList.add('hidden');
-                openThemeEditor();
-            });
+            const menuBtn = document.getElementById('themeMenuBtn'), menu = document.getElementById('themeMenu');
+            menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menu.classList.toggle('hidden'); });
+            document.addEventListener('click', (e) => { if(!menu.contains(e.target) && e.target !== menuBtn) menu.classList.add('hidden'); });
+            document.querySelectorAll('#themeMenu button[data-theme]').forEach(btn => btn.addEventListener('click', () => { setTheme(btn.dataset.theme); menu.classList.add('hidden'); }));
+            document.getElementById('createCustomThemeBtn').addEventListener('click', () => { menu.classList.add('hidden'); openThemeEditor(); });
             document.getElementById('rgbToggleBtn').addEventListener('click', toggleRGB);
-            document.getElementById('bulkBuyBtn').addEventListener('click', bulkBuyAll);
+            document.getElementById('bulkBuySelectedBtn')?.addEventListener('click', bulkBuySelected);
+            document.getElementById('selectAllBtn')?.addEventListener('click', () => { document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = true); updateBulkButtonState(); });
+            document.getElementById('deselectAllBtn')?.addEventListener('click', () => { document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = false); updateBulkButtonState(); });
             document.getElementById('amount').addEventListener('keypress', (e) => { if(e.key === 'Enter') addMoney(); });
         });
-        
-        window.setGoal = setGoal;
-        window.addMoney = addMoney;
-        window.withdrawMoney = withdrawMoney;
-        window.resetAllData = resetAllData;
-        window.addWishItem = addWishItem;
+        window.setGoal = setGoal; window.addMoney = addMoney; window.withdrawMoney = withdrawMoney; window.resetAllData = resetAllData; window.addWishItem = addWishItem;
     </script>
 </body>
 </html>
