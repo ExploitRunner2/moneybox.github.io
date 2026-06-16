@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -124,8 +125,31 @@
         button:active { transform: scale(0.97); }
         .stats { border-radius: 24px; padding: 20px; margin-bottom: 24px; }
         .stat-value { font-size: 28px; font-weight: 800; }
-        .progress-bar { width: 100%; height: 32px; background: rgba(0, 0, 0, 0.12); border-radius: 40px; overflow: hidden; margin: 16px 0 4px; }
-        .progress-fill { height: 100%; border-radius: 40px; transition: width 0.35s; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 13px; }
+        
+        /* --- ОСНОВНОЙ ПРОГРЕСС-БАР (универсальный, переопределяется темами) --- */
+        .progress-bar { 
+            width: 100%; 
+            height: 32px; 
+            background: rgba(0, 0, 0, 0.15); 
+            border-radius: 40px; 
+            overflow: hidden; 
+            margin: 16px 0 4px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .progress-fill { 
+            height: 100%; 
+            border-radius: 40px; 
+            transition: width 0.5s ease; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            color: white; 
+            font-weight: 800; 
+            font-size: 14px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            width: 0%;
+        }
+
         .operations { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
         .withdraw-btn { background: #ef4444 !important; }
         .wishlist-section { margin: 20px 0 24px; }
@@ -145,6 +169,53 @@
         .empty-items, .empty-history-message { text-align: center; padding: 24px; font-style: italic; opacity: 0.7; }
         .total-wish-cost { font-weight: 700; padding: 6px 14px; border-radius: 40px; background: rgba(0,0,0,0.05); display: inline-block; }
         .wishlist-header { display: flex; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; }
+
+        /* --- ПРОГРЕСС-БАР ДЛЯ МАССОВЫХ ПОКУПОК (универсальный) --- */
+        .bulk-progress-wrapper {
+            background: rgba(0,0,0,0.06);
+            border-radius: 40px;
+            padding: 8px 8px 8px 18px;
+            margin: 14px 0 18px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            flex-wrap: wrap;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .bulk-progress-track {
+            flex: 1;
+            min-width: 140px;
+            height: 28px;
+            background: rgba(0,0,0,0.15);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .bulk-progress-fill {
+            height: 100%;
+            border-radius: 40px;
+            transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            white-space: nowrap;
+        }
+        .bulk-progress-label {
+            font-weight: 600;
+            font-size: 14px;
+            min-width: 100px;
+        }
+        .bulk-progress-label .highlight {
+            font-weight: 800;
+            font-size: 16px;
+        }
 
         /* Стили для массовых покупок (вкладка) */
         .bulk-select-all {
@@ -208,11 +279,8 @@
             border-radius: 30px;
             padding: 4px 12px;
         }
-        .no-items-message {
-            text-align: center;
-            padding: 40px;
-            font-style: italic;
-        }
+        .bulk-status.ok { background: rgba(34,197,94,0.25); color: #16a34a; }
+        .bulk-status.need { background: rgba(239,68,68,0.2); color: #dc2626; }
 
         /* Модальное окно редактора тем */
         .theme-editor-modal {
@@ -300,53 +368,116 @@
             100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
         }
 
-        /* ========== СТАНДАРТНЫЕ ТЕМЫ ========== */
+        /* ========== ТЕМЫ С РАЗЛИЧНЫМИ ПРОГРЕСС-БАРАМИ ========== */
+        
+        /* Светлая тема — нежный градиент */
         body.theme-light { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
         body.theme-light .container { background: #ffffff; box-shadow: 0 20px 45px rgba(0,0,0,0.25); color: #1e293b; }
         body.theme-light button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #667eea; color: white; }
         body.theme-light .stats { background: #f1f5f9; }
+        body.theme-light .progress-fill { background: linear-gradient(90deg, #a78bfa, #8b5cf6, #7c3aed); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+        body.theme-light .progress-fill.complete { background: linear-gradient(90deg, #34d399, #22c55e, #16a34a); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; }
+        body.theme-light .bulk-progress-fill { background: linear-gradient(90deg, #60a5fa, #3b82f6, #2563eb); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; }
+        body.theme-light .bulk-progress-fill.ready { background: linear-gradient(90deg, #34d399, #22c55e, #16a34a); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; }
         
+        /* Тёмная тема — неоновый стиль */
         body.theme-dark { background: linear-gradient(135deg, #0f172a 0%, #1e1b2e 100%); }
         body.theme-dark .container { background: #1e293b; box-shadow: 0 20px 45px rgba(0,0,0,0.5); color: #f1f5f9; }
         body.theme-dark button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #7c3aed; color: white; }
         body.theme-dark .stats { background: #0f172a; }
+        body.theme-dark .progress-fill { background: linear-gradient(90deg, #f472b6, #ec4899, #db2777); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; box-shadow: 0 0 20px rgba(236,72,153,0.4); }
+        body.theme-dark .progress-fill.complete { background: linear-gradient(90deg, #34d399, #22c55e, #16a34a); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
+        body.theme-dark .bulk-progress-fill { background: linear-gradient(90deg, #a78bfa, #8b5cf6, #7c3aed); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; box-shadow: 0 0 20px rgba(139,92,246,0.3); }
+        body.theme-dark .bulk-progress-fill.ready { background: linear-gradient(90deg, #34d399, #22c55e, #16a34a); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; box-shadow: 0 0 20px rgba(34,197,94,0.4); }
         
+        /* Закат — тёплый огненный */
         body.theme-sunset { background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); }
         body.theme-sunset .container { background: #fff5f9; color: #831843; }
         body.theme-sunset button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #db2777; color: white; }
         body.theme-sunset .stats { background: #fdf2f8; }
+        body.theme-sunset .progress-fill { background: linear-gradient(90deg, #fb923c, #f97316, #ea580c); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+        body.theme-sunset .progress-fill.complete { background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; }
+        body.theme-sunset .bulk-progress-fill { background: linear-gradient(90deg, #f472b6, #ec4899, #db2777); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; }
+        body.theme-sunset .bulk-progress-fill.ready { background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; }
         
+        /* Океан — холодный синий */
         body.theme-ocean { background: linear-gradient(135deg, #00c6fb 0%, #005bea 100%); }
         body.theme-ocean .container { background: #eef5ff; color: #0c4a6e; }
         body.theme-ocean button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #0284c7; color: white; }
         body.theme-ocean .stats { background: #e0f2fe; }
+        body.theme-ocean .progress-fill { background: linear-gradient(90deg, #38bdf8, #0ea5e9, #0284c7); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+        body.theme-ocean .progress-fill.complete { background: linear-gradient(90deg, #34d399, #22c55e, #16a34a); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; }
+        body.theme-ocean .bulk-progress-fill { background: linear-gradient(90deg, #7dd3fc, #38bdf8, #0ea5e9); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; }
+        body.theme-ocean .bulk-progress-fill.ready { background: linear-gradient(90deg, #34d399, #22c55e, #16a34a); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; }
         
+        /* Лес — зелёный природный */
         body.theme-forest { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
         body.theme-forest .container { background: #f1f9f0; color: #14532d; }
         body.theme-forest button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #16a34a; color: white; }
         body.theme-forest .stats { background: #dcfce7; }
+        body.theme-forest .progress-fill { background: linear-gradient(90deg, #4ade80, #22c55e, #16a34a); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+        body.theme-forest .progress-fill.complete { background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; }
+        body.theme-forest .bulk-progress-fill { background: linear-gradient(90deg, #86efac, #4ade80, #22c55e); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; }
+        body.theme-forest .bulk-progress-fill.ready { background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; }
         
+        /* Космос — фиолетово-розовый неон */
         body.theme-cosmic { background: linear-gradient(135deg, #2b1b4e 0%, #e956a7 100%); }
         body.theme-cosmic .container { background: #1e1a3a; color: #e9d5ff; }
         body.theme-cosmic button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #a855f7; color: white; }
         body.theme-cosmic .stats { background: #2e2359; }
+        body.theme-cosmic .progress-fill { background: linear-gradient(90deg, #c084fc, #a855f7, #7c3aed); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; box-shadow: 0 0 25px rgba(168,85,247,0.4); }
+        body.theme-cosmic .progress-fill.complete { background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; box-shadow: 0 0 25px rgba(245,158,11,0.4); }
+        body.theme-cosmic .bulk-progress-fill { background: linear-gradient(90deg, #e879f9, #d946ef, #c026d3); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; box-shadow: 0 0 20px rgba(217,70,239,0.3); }
+        body.theme-cosmic .bulk-progress-fill.ready { background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; box-shadow: 0 0 25px rgba(245,158,11,0.4); }
         
+        /* Пустыня — песчаный стиль */
         body.theme-desert { background: linear-gradient(135deg, #f5af19 0%, #f12711 100%); }
         body.theme-desert .container { background: #fff5e6; color: #7c2d12; }
         body.theme-desert button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #ea580c; color: white; }
         body.theme-desert .stats { background: #ffedd5; }
+        body.theme-desert .progress-fill { background: linear-gradient(90deg, #fcd34d, #f59e0b, #d97706); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+        body.theme-desert .progress-fill.complete { background: linear-gradient(90deg, #34d399, #22c55e, #16a34a); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; }
+        body.theme-desert .bulk-progress-fill { background: linear-gradient(90deg, #fdba74, #fb923c, #f97316); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; }
+        body.theme-desert .bulk-progress-fill.ready { background: linear-gradient(90deg, #34d399, #22c55e, #16a34a); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; }
         
+        /* Marlboro — классический красный с золотом */
         body.theme-marlboro { background: linear-gradient(135deg, #8b0000 0%, #cc0000 100%); }
         body.theme-marlboro .container { background: #fffaf0; border: 1px solid #b22222; color: #4a2c2c; }
         body.theme-marlboro button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #b22222; color: white; }
         body.theme-marlboro .stats { background: #fef3e2; border-left: 6px solid #b22222; }
+        body.theme-marlboro .progress-fill { background: linear-gradient(90deg, #f87171, #ef4444, #dc2626); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+        body.theme-marlboro .progress-fill.complete { background: linear-gradient(90deg, #fcd34d, #f59e0b, #d97706); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; }
+        body.theme-marlboro .bulk-progress-fill { background: linear-gradient(90deg, #fca5a5, #f87171, #ef4444); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; }
+        body.theme-marlboro .bulk-progress-fill.ready { background: linear-gradient(90deg, #fcd34d, #f59e0b, #d97706); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; }
         
+        /* Сакура — нежно-розовый с лепестками */
         body.theme-sakura { background: radial-gradient(circle at 10% 20%, #fff0f5, #ffe0e8); }
         body.theme-sakura .container { background: rgba(255, 245, 250, 0.94); backdrop-filter: blur(3px); border: 1px solid #ffb7c5; color: #b34562; }
         body.theme-sakura button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #e66a8c; color: white; }
         body.theme-sakura .stats { background: #ffeef4; border-left: 5px solid #f28b9e; }
+        body.theme-sakura .progress-fill { background: linear-gradient(90deg, #f9a8d4, #f472b6, #ec4899); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; border-radius: 40px 0 0 40px; }
+        body.theme-sakura .progress-fill.complete { background: linear-gradient(90deg, #fcd34d, #fbbf24, #f59e0b); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; }
+        body.theme-sakura .bulk-progress-fill { background: linear-gradient(90deg, #fbcfe8, #f9a8d4, #f472b6); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; border-radius: 40px 0 0 40px; }
+        body.theme-sakura .bulk-progress-fill.ready { background: linear-gradient(90deg, #fcd34d, #fbbf24, #f59e0b); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; }
         
+        /* Кастомная тема — динамическая (задаётся через редактор) */
+        body.theme-custom .progress-fill { background: var(--custom-progress, linear-gradient(90deg, #8b5cf6, #ec4899, #f59e0b)); background-size: 200% 100%; animation: shimmer 3s ease-in-out infinite; }
+        body.theme-custom .progress-fill.complete { background: var(--custom-progress-complete, linear-gradient(90deg, #22c55e, #16a34a, #15803d)); background-size: 200% 100%; animation: shimmer 2s ease-in-out infinite; }
+        body.theme-custom .bulk-progress-fill { background: var(--custom-bulk-progress, linear-gradient(90deg, #8b5cf6, #ec4899, #f59e0b)); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; }
+        body.theme-custom .bulk-progress-fill.ready { background: var(--custom-bulk-ready, linear-gradient(90deg, #22c55e, #16a34a, #15803d)); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; }
         body.theme-custom .container { transition: all 0.2s; }
+        
+        /* Анимации градиентов */
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        @keyframes bulkShimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
     </style>
 </head>
 <body class="theme-marlboro">
@@ -354,9 +485,9 @@
         <div class="header">
             <h1>КОПИЛКА</h1>
             <div style="display: flex; gap: 10px;">
-                <button id="rgbToggleBtn" class="rgb-toggle">🌈 RGB режим</button>
+                <button id="rgbToggleBtn" class="rgb-toggle">RGB режим</button>
                 <div class="theme-dropdown">
-                    <button id="themeMenuBtn" class="theme-main-btn">🎨 Темы ▼</button>
+                    <button id="themeMenuBtn" class="theme-main-btn">Темы ▼</button>
                     <div id="themeMenu" class="theme-menu hidden">
                         <button data-theme="light">Светлая</button>
                         <button data-theme="dark">Тёмная</button>
@@ -367,7 +498,7 @@
                         <button data-theme="desert">Пустыня</button>
                         <button data-theme="marlboro">Marlboro</button>
                         <button data-theme="sakura">🌸 Сакура</button>
-                        <button id="createCustomThemeBtn" style="background: #f59e0b; color:#1e1a2f;">✨ Создать свою тему</button>
+                        <button id="createCustomThemeBtn" style="background: #f59e0b; color:#1e1a2f;">Создать свою тему</button>
                     </div>
                 </div>
             </div>
@@ -375,8 +506,8 @@
 
         <!-- Вкладки: Основное и Массовые покупки -->
         <div class="tabs">
-            <button class="tab-btn active" data-tab="main">📋 Основное</button>
-            <button class="tab-btn" data-tab="bulk">🛒 Массовые покупки</button>
+            <button class="tab-btn active" data-tab="main">Основное</button>
+            <button class="tab-btn" data-tab="bulk">Массовые покупки</button>
         </div>
 
         <!-- Вкладка Основное -->
@@ -435,22 +566,30 @@
             </div>
         </div>
 
-        <!-- Вкладка Массовые покупки (новая) -->
+        <!-- Вкладка Массовые покупки -->
         <div id="tab-bulk" class="tab-content">
-            <div style="margin-bottom: 20px;">
-                <h3 style="font-size: 20px;">📦 Выберите товары для массовой покупки</h3>
-                <p style="margin-top: 6px; opacity: 0.7;">Отметьте нужные позиции и купите их все за один клик</p>
+            <div style="margin-bottom: 16px;">
+                <h3 style="font-size: 20px;">Выберите товары для массовой покупки</h3>
+                <p style="margin-top: 4px; opacity: 0.7;">Отметьте нужные позиции — прогресс покажет, сколько средств хватит</p>
             </div>
+
+            <div class="bulk-progress-wrapper" id="bulkProgressWrapper">
+                <span class="bulk-progress-label">Доступно: <span class="highlight" id="bulkSavedDisplay">0</span> ₽</span>
+                <div class="bulk-progress-track">
+                    <div class="bulk-progress-fill" id="bulkProgressFill" style="width: 0%;">0%</div>
+                </div>
+                <span class="bulk-progress-label">нужно: <span class="highlight" id="bulkNeedDisplay">0</span> ₽</span>
+            </div>
+
             <div id="bulkListContainer" class="bulk-list-area">
-                <!-- динамический список с чекбоксами -->
                 <div class="empty-items">Загрузка...</div>
             </div>
             <div class="bulk-select-all" id="bulkSelectPanel" style="display: none;">
                 <div class="bulk-actions-bar">
-                    <button id="selectAllBtn" class="bulk-clear" style="background: #334155;">✅ Выбрать всё</button>
-                    <button id="deselectAllBtn" class="bulk-clear" style="background: #475569;">❌ Снять всё</button>
+                    <button id="selectAllBtn" class="bulk-clear" style="background: #334155;">Выбрать всё</button>
+                    <button id="deselectAllBtn" class="bulk-clear" style="background: #475569;">Снять всё</button>
                 </div>
-                <button id="bulkBuySelectedBtn" class="bulk-buy-confirm">🔥 Купить выбранные</button>
+                <button id="bulkBuySelectedBtn" class="bulk-buy-confirm">Купить выбранные</button>
             </div>
         </div>
     </div>
@@ -485,8 +624,9 @@
             updateDisplay();
             renderWishlist();
             renderBulkList();
+            updateBulkProgress();
         }
-        function saveData() { localStorage.setItem('piggyBankApp', JSON.stringify(piggyData)); renderBulkList(); }
+        function saveData() { localStorage.setItem('piggyBankApp', JSON.stringify(piggyData)); renderBulkList(); updateBulkProgress(); }
         function addHistory(type, amount, comment='') {
             piggyData.history.unshift({ type, amount, date: new Date().toLocaleString('ru-RU'), comment });
             if (piggyData.history.length > 35) piggyData.history.pop();
@@ -519,12 +659,40 @@
             let percent = Math.min(100, (piggyData.saved / piggyData.goalAmount) * 100);
             const fill = document.getElementById('progressFill');
             fill.style.width = `${percent}%`;
-            fill.innerHTML = `${Math.round(percent)}%`;
+            fill.textContent = `${Math.round(percent)}%`;
+            if (percent >= 100) {
+                fill.classList.add('complete');
+            } else {
+                fill.classList.remove('complete');
+            }
             renderHistory();
+            updateBulkProgress();
         }
         function getTotalWishCost() { return piggyData.wishItems.reduce((s,i)=> s + (i.price*i.quantity),0); }
         function updateTotalUI() { document.getElementById('totalWishCostSpan').innerHTML = `Общая стоимость: ${getTotalWishCost().toLocaleString()} ₽`; }
         
+        function updateBulkProgress() {
+            const saved = piggyData.saved || 0;
+            const selectedItems = getSelectedItems();
+            let totalSelectedCost = 0;
+            for(let item of selectedItems) {
+                totalSelectedCost += item.price * item.quantity;
+            }
+            const need = Math.max(0, totalSelectedCost - saved);
+            const percent = totalSelectedCost > 0 ? Math.min(100, (saved / totalSelectedCost) * 100) : 0;
+
+            document.getElementById('bulkSavedDisplay').textContent = saved.toLocaleString();
+            document.getElementById('bulkNeedDisplay').textContent = need.toLocaleString();
+            const fill = document.getElementById('bulkProgressFill');
+            fill.style.width = percent + '%';
+            fill.textContent = totalSelectedCost > 0 ? Math.round(percent) + '%' : '0%';
+            if (percent >= 100 && totalSelectedCost > 0) {
+                fill.classList.add('ready');
+            } else {
+                fill.classList.remove('ready');
+            }
+        }
+
         function renderWishlist() {
             const container = document.getElementById('wishlistContainer');
             if(!piggyData.wishItems.length) { container.innerHTML = '<div class="empty-items">Список покупок пуст</div>'; updateTotalUI(); return; }
@@ -561,22 +729,24 @@
             document.querySelectorAll('.del-item-btn').forEach(btn => btn.addEventListener('click', (e) => deleteWishItem(parseInt(btn.dataset.id))));
             updateTotalUI();
             renderBulkList();
+            updateBulkProgress();
         }
         
-        // Отрисовка вкладки массовых покупок с чекбоксами
         function renderBulkList() {
             const container = document.getElementById('bulkListContainer');
             const panel = document.getElementById('bulkSelectPanel');
             if(!container) return;
             if(!piggyData.wishItems.length) {
-                container.innerHTML = '<div class="empty-items">📭 Список покупок пуст. Добавьте предметы на вкладке "Основное".</div>';
+                container.innerHTML = '<div class="empty-items">Список покупок пуст. Добавьте предметы на вкладке "Основное".</div>';
                 if(panel) panel.style.display = 'none';
+                updateBulkProgress();
                 return;
             }
             if(panel) panel.style.display = 'flex';
             container.innerHTML = '';
             piggyData.wishItems.forEach(item => {
                 const totalPrice = item.price * item.quantity;
+                const canBuy = piggyData.saved >= totalPrice;
                 const div = document.createElement('div');
                 div.className = 'bulk-item';
                 div.setAttribute('data-id', item.id);
@@ -587,18 +757,18 @@
                         <div class="bulk-item-details">${item.quantity} шт × ${item.price.toLocaleString()} ₽</div>
                     </div>
                     <div class="bulk-item-cost">${totalPrice.toLocaleString()} ₽</div>
-                    <div class="bulk-status ${piggyData.saved >= totalPrice ? 'ok' : 'need'}">${piggyData.saved >= totalPrice ? '✅ доступно' : `❌ не хватает ${(totalPrice - piggyData.saved).toLocaleString()}₽`}</div>
+                    <div class="bulk-status ${canBuy ? 'ok' : 'need'}">${canBuy ? 'доступно' : `не хватает ${(totalPrice - piggyData.saved).toLocaleString()}₽`}</div>
                 `;
                 container.appendChild(div);
             });
-            // перепривязываем события
             document.querySelectorAll('.bulk-checkbox').forEach(cb => {
-                cb.addEventListener('change', () => updateBulkButtonState());
+                cb.addEventListener('change', () => { updateBulkButtonState(); updateBulkProgress(); });
             });
             updateBulkButtonState();
+            updateBulkProgress();
         }
         
-        function updateBulkButtonState() { /* просто визуально обновляем кнопку */ }
+        function updateBulkButtonState() { /* визуально */ }
         
         function getSelectedItems() {
             const checkboxes = document.querySelectorAll('.bulk-checkbox:checked');
@@ -618,7 +788,7 @@
                     totalCost += cost;
                     boughtItems.push(item);
                 } else {
-                    alert(`❌ Не хватает средств для "${item.name}" (нужно ${cost.toLocaleString()} ₽). Пополните копилку или выберите меньше товаров.`);
+                    alert(`Не хватает средств для "${item.name}" (нужно ${cost.toLocaleString()} ₽). Пополните копилку или выберите меньше товаров.`);
                     return;
                 }
             }
@@ -633,7 +803,8 @@
             updateDisplay();
             renderWishlist();
             renderBulkList();
-            alert(`✅ Куплено ${boughtItems.length} товаров на сумму ${totalCost.toLocaleString()} ₽`);
+            updateBulkProgress();
+            alert(`Куплено ${boughtItems.length} товаров на сумму ${totalCost.toLocaleString()} ₽`);
             if(piggyData.saved >= piggyData.goalAmount) showAchievementModal();
         }
         
@@ -727,7 +898,7 @@
         }
         function escapeHtml(str) { return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
         
-        // Темизация (без изменений)
+        // Темизация
         function stopAllEffects() {
             if(sakuraInterval) { clearInterval(sakuraInterval); sakuraInterval = null; }
             if(customParticleInterval) { clearInterval(customParticleInterval); customParticleInterval = null; }
@@ -766,16 +937,28 @@
             if(themeName !== 'custom') {
                 document.body.classList.add(`theme-${themeName}`);
                 if(themeName === 'sakura') startSakuraEffect();
+            } else {
+                document.body.classList.add('theme-custom');
             }
             localStorage.setItem('piggyTheme', themeName);
         }
-        function openThemeEditor() { /* сохранен оригинальный редактор */
+        function openThemeEditor() {
             const modal = document.createElement('div');
             modal.className = 'theme-editor-modal';
-            modal.innerHTML = `<div class="editor-panel"><h3>🎨 Создать свою тему</h3><label>Фоновое изображение (URL)</label><input type="text" id="customBgImg" placeholder="https://example.com/background.jpg"><label>Цвет фона</label><input type="color" id="customBgColor" value="#1a1a2e"><label>Цвет контейнера</label><input type="color" id="customContainerColor" value="#16213e"><label>Цвет кнопок</label><input type="color" id="customBtnColor" value="#e94560"><label>Цвет текста</label><input type="color" id="customTextColor" value="#f1f5f9"><div class="effect-checkbox"><input type="checkbox" id="enableParticles"> <label style="display:inline;">✨ Эффект частиц</label></div><label>CSS эффект</label><textarea id="customCssEffect" rows="2"></textarea><div class="editor-buttons"><button id="applyCustomThemeBtn">Применить</button><button id="closeEditorBtn">Отмена</button></div></div>`;
+            modal.innerHTML = `<div class="editor-panel"><h3>Создать свою тему</h3><label>Фоновое изображение (URL)</label><input type="text" id="customBgImg" placeholder="https://example.com/background.jpg"><label>Цвет фона</label><input type="color" id="customBgColor" value="#1a1a2e"><label>Цвет контейнера</label><input type="color" id="customContainerColor" value="#16213e"><label>Цвет кнопок</label><input type="color" id="customBtnColor" value="#e94560"><label>Цвет текста</label><input type="color" id="customTextColor" value="#f1f5f9"><label>Цвет прогресс-бара (основной)</label><input type="color" id="customProgressColor" value="#8b5cf6"><label>Цвет прогресс-бара (массовые)</label><input type="color" id="customBulkColor" value="#ec4899"><div class="effect-checkbox"><input type="checkbox" id="enableParticles"> <label style="display:inline;">Эффект частиц</label></div><label>Доп. CSS эффект</label><textarea id="customCssEffect" rows="2"></textarea><div class="editor-buttons"><button id="applyCustomThemeBtn">Применить</button><button id="closeEditorBtn">Отмена</button></div></div>`;
             document.body.appendChild(modal);
-            modal.querySelector('#applyCustomThemeBtn').onclick = () => { /* упрощённое применение */
-                const data = { bgImg:modal.querySelector('#customBgImg').value, bgColor:modal.querySelector('#customBgColor').value, containerColor:modal.querySelector('#customContainerColor').value, btnColor:modal.querySelector('#customBtnColor').value, textColor:modal.querySelector('#customTextColor').value, cssEffect:modal.querySelector('#customCssEffect').value, enableParticles:modal.querySelector('#enableParticles').checked };
+            modal.querySelector('#applyCustomThemeBtn').onclick = () => {
+                const data = {
+                    bgImg: modal.querySelector('#customBgImg').value,
+                    bgColor: modal.querySelector('#customBgColor').value,
+                    containerColor: modal.querySelector('#customContainerColor').value,
+                    btnColor: modal.querySelector('#customBtnColor').value,
+                    textColor: modal.querySelector('#customTextColor').value,
+                    progressColor: modal.querySelector('#customProgressColor').value,
+                    bulkColor: modal.querySelector('#customBulkColor').value,
+                    cssEffect: modal.querySelector('#customCssEffect').value,
+                    enableParticles: modal.querySelector('#enableParticles').checked
+                };
                 stopAllEffects();
                 document.body.classList.add('theme-custom');
                 if(data.bgImg) document.body.style.background = `url('${data.bgImg}') center/cover fixed`;
@@ -783,28 +966,68 @@
                 const container = document.querySelector('.container');
                 container.style.background = data.containerColor;
                 container.style.color = data.textColor;
+                // Устанавливаем CSS-переменные для прогресс-баров
+                document.documentElement.style.setProperty('--custom-progress', `linear-gradient(90deg, ${data.progressColor}, ${adjustColor(data.progressColor, 20)}, ${adjustColor(data.progressColor, 40)})`);
+                document.documentElement.style.setProperty('--custom-progress-complete', `linear-gradient(90deg, #22c55e, #16a34a, #15803d)`);
+                document.documentElement.style.setProperty('--custom-bulk-progress', `linear-gradient(90deg, ${data.bulkColor}, ${adjustColor(data.bulkColor, 30)}, ${adjustColor(data.bulkColor, 50)})`);
+                document.documentElement.style.setProperty('--custom-bulk-ready', `linear-gradient(90deg, #22c55e, #16a34a, #15803d)`);
+                
                 let styleTag = document.getElementById('customThemeStyle');
                 if(!styleTag) { styleTag = document.createElement('style'); styleTag.id = 'customThemeStyle'; document.head.appendChild(styleTag); }
-                styleTag.innerHTML = `body.theme-custom .container { background: ${data.containerColor} !important; color: ${data.textColor} !important; } body.theme-custom button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: ${data.btnColor} !important; color: white; } body.theme-custom .container { ${data.cssEffect} }`;
+                styleTag.innerHTML = `
+                    body.theme-custom .container { background: ${data.containerColor} !important; color: ${data.textColor} !important; }
+                    body.theme-custom button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: ${data.btnColor} !important; color: white; }
+                    body.theme-custom .container { ${data.cssEffect} }
+                `;
                 if(data.enableParticles && !customParticleInterval) customParticleInterval = setInterval(() => { if(document.body.classList.contains('theme-custom')) { const p = document.createElement('div'); p.className = 'custom-particle'; p.style.cssText = `width:6px;height:6px;left:${Math.random()*100}%;animation-duration:${3+Math.random()*5}s;background:radial-gradient(circle, ${data.btnColor}, transparent)`; document.body.appendChild(p); setTimeout(()=>p.remove(),5000); } }, 400);
-                localStorage.setItem('piggyTheme', 'custom'); localStorage.setItem('customThemeData', JSON.stringify(data));
+                localStorage.setItem('piggyTheme', 'custom');
+                localStorage.setItem('customThemeData', JSON.stringify(data));
                 modal.remove();
             };
             modal.querySelector('#closeEditorBtn').onclick = () => modal.remove();
         }
-        function loadTheme() { let saved = localStorage.getItem('piggyTheme'); if(saved === 'custom') { /* загрузка кастомной темы */ } else if(saved && ['light','dark','sunset','ocean','forest','cosmic','desert','marlboro','sakura'].includes(saved)) setTheme(saved); else setTheme('marlboro'); }
-        function toggleRGB() { document.body.classList.toggle('rgb-mode'); const btn = document.getElementById('rgbToggleBtn'); if(document.body.classList.contains('rgb-mode')) btn.textContent = '🔴 RGB вкл'; else btn.textContent = '🌈 RGB режим'; }
+        
+        function adjustColor(hex, percent) {
+            // Упрощённое осветление/затемнение цвета
+            let r = parseInt(hex.slice(1,3), 16);
+            let g = parseInt(hex.slice(3,5), 16);
+            let b = parseInt(hex.slice(5,7), 16);
+            r = Math.min(255, r + percent);
+            g = Math.min(255, g + percent);
+            b = Math.min(255, b + percent);
+            return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        }
+        
+        function loadTheme() {
+            let saved = localStorage.getItem('piggyTheme');
+            if(saved === 'custom') {
+                const customData = localStorage.getItem('customThemeData');
+                if(customData) {
+                    const data = JSON.parse(customData);
+                    document.documentElement.style.setProperty('--custom-progress', `linear-gradient(90deg, ${data.progressColor}, ${adjustColor(data.progressColor, 20)}, ${adjustColor(data.progressColor, 40)})`);
+                    document.documentElement.style.setProperty('--custom-progress-complete', `linear-gradient(90deg, #22c55e, #16a34a, #15803d)`);
+                    document.documentElement.style.setProperty('--custom-bulk-progress', `linear-gradient(90deg, ${data.bulkColor}, ${adjustColor(data.bulkColor, 30)}, ${adjustColor(data.bulkColor, 50)})`);
+                    document.documentElement.style.setProperty('--custom-bulk-ready', `linear-gradient(90deg, #22c55e, #16a34a, #15803d)`);
+                }
+                setTheme('custom');
+            } else if(saved && ['light','dark','sunset','ocean','forest','cosmic','desert','marlboro','sakura'].includes(saved)) {
+                setTheme(saved);
+            } else {
+                setTheme('marlboro');
+            }
+        }
+        
+        function toggleRGB() { document.body.classList.toggle('rgb-mode'); const btn = document.getElementById('rgbToggleBtn'); if(document.body.classList.contains('rgb-mode')) btn.textContent = 'RGB вкл'; else btn.textContent = 'RGB режим'; }
         
         document.addEventListener('DOMContentLoaded', () => {
             loadData(); loadTheme();
-            // Вкладки
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
                     document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active-tab');
-                    if(btn.dataset.tab === 'bulk') renderBulkList();
+                    if(btn.dataset.tab === 'bulk') { renderBulkList(); updateBulkProgress(); }
                 });
             });
             const menuBtn = document.getElementById('themeMenuBtn'), menu = document.getElementById('themeMenu');
@@ -814,9 +1037,10 @@
             document.getElementById('createCustomThemeBtn').addEventListener('click', () => { menu.classList.add('hidden'); openThemeEditor(); });
             document.getElementById('rgbToggleBtn').addEventListener('click', toggleRGB);
             document.getElementById('bulkBuySelectedBtn')?.addEventListener('click', bulkBuySelected);
-            document.getElementById('selectAllBtn')?.addEventListener('click', () => { document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = true); updateBulkButtonState(); });
-            document.getElementById('deselectAllBtn')?.addEventListener('click', () => { document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.checked = false); updateBulkButtonState(); });
+            document.getElementById('selectAllBtn')?.addEventListener('click', () => { document.querySelectorAll('.bulk-checkbox').forEach(cb => { cb.checked = true; }); updateBulkProgress(); });
+            document.getElementById('deselectAllBtn')?.addEventListener('click', () => { document.querySelectorAll('.bulk-checkbox').forEach(cb => { cb.checked = false; }); updateBulkProgress(); });
             document.getElementById('amount').addEventListener('keypress', (e) => { if(e.key === 'Enter') addMoney(); });
+            updateBulkProgress();
         });
         window.setGoal = setGoal; window.addMoney = addMoney; window.withdrawMoney = withdrawMoney; window.resetAllData = resetAllData; window.addWishItem = addWishItem;
     </script>
