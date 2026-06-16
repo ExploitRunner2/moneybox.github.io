@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -26,7 +27,7 @@
             overflow-x: hidden;
         }
 
-        /* ====== CSS-ГЕОМЕТРИЯ (исправлено) ====== */
+        /* ====== CSS-ГЕОМЕТРИЯ ====== */
         body.theme-geometric::before,
         body.theme-waves::before,
         body.theme-dots::before,
@@ -39,7 +40,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 0;
+            z-index: 1;
         }
 
         body.theme-geometric::before {
@@ -78,14 +79,62 @@
             background-position: 0 0, 0 0, 35px 60px, 35px 60px;
         }
 
+        /* ====== RGB АНИМАЦИЯ (исправлена) ====== */
+        @keyframes rgbBorder {
+            0% { 
+                box-shadow: 0 0 15px rgba(255,0,0,0.8), 0 0 30px rgba(255,0,0,0.4), inset 0 0 15px rgba(255,0,0,0.2);
+                border-color: #ff0000;
+            }
+            16% { 
+                box-shadow: 0 0 15px rgba(255,255,0,0.8), 0 0 30px rgba(255,255,0,0.4), inset 0 0 15px rgba(255,255,0,0.2);
+                border-color: #ffff00;
+            }
+            33% { 
+                box-shadow: 0 0 15px rgba(0,255,0,0.8), 0 0 30px rgba(0,255,0,0.4), inset 0 0 15px rgba(0,255,0,0.2);
+                border-color: #00ff00;
+            }
+            50% { 
+                box-shadow: 0 0 15px rgba(0,255,255,0.8), 0 0 30px rgba(0,255,255,0.4), inset 0 0 15px rgba(0,255,255,0.2);
+                border-color: #00ffff;
+            }
+            66% { 
+                box-shadow: 0 0 15px rgba(0,0,255,0.8), 0 0 30px rgba(0,0,255,0.4), inset 0 0 15px rgba(0,0,255,0.2);
+                border-color: #0000ff;
+            }
+            83% { 
+                box-shadow: 0 0 15px rgba(255,0,255,0.8), 0 0 30px rgba(255,0,255,0.4), inset 0 0 15px rgba(255,0,255,0.2);
+                border-color: #ff00ff;
+            }
+            100% { 
+                box-shadow: 0 0 15px rgba(255,0,0,0.8), 0 0 30px rgba(255,0,0,0.4), inset 0 0 15px rgba(255,0,0,0.2);
+                border-color: #ff0000;
+            }
+        }
+        body.rgb-mode .container {
+            animation: rgbBorder 2.5s ease-in-out infinite;
+            border-radius: 32px;
+            border: 3px solid #ff0000;
+            position: relative;
+            z-index: 10;
+        }
+        /* Отключаем геометрические эффекты в RGB режиме, чтобы не мешали */
+        body.rgb-mode.theme-geometric::before,
+        body.rgb-mode.theme-waves::before,
+        body.rgb-mode.theme-dots::before,
+        body.rgb-mode.theme-stripes::before,
+        body.rgb-mode.theme-triangles::before {
+            opacity: 0.3;
+        }
+
         .container {
             max-width: 860px;
             width: 100%;
             border-radius: 32px;
             padding: 28px 24px;
-            transition: background 0.3s ease, box-shadow 0.3s, color 0.2s;
+            transition: background 0.3s ease, box-shadow 0.3s, color 0.2s, border 0.3s ease;
             position: relative;
             z-index: 10;
+            border: 3px solid transparent;
         }
 
         .header {
@@ -116,7 +165,28 @@
         .theme-menu button { background: rgba(255,255,255,0.1); border: none; padding: 8px 12px; border-radius: 30px; color: white; font-weight: 500; cursor: pointer; text-align: left; transition: 0.2s; }
         .theme-menu button:hover { background: rgba(255,255,255,0.3); transform: scale(0.98); }
         .hidden { display: none; }
-        .rgb-toggle { background: linear-gradient(45deg, red, blue, green); color: white; border: none; padding: 8px 16px; border-radius: 40px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .rgb-toggle { 
+            background: linear-gradient(45deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff); 
+            color: white; 
+            border: none; 
+            padding: 8px 16px; 
+            border-radius: 40px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 13px;
+            background-size: 300% 300%;
+            animation: rgbBtn 3s ease-in-out infinite;
+            transition: 0.3s;
+        }
+        @keyframes rgbBtn {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .rgb-toggle:hover { transform: scale(1.05); }
+        .rgb-toggle.active { 
+            box-shadow: 0 0 20px rgba(255,0,0,0.5), 0 0 40px rgba(0,255,0,0.3), 0 0 60px rgba(0,0,255,0.2);
+        }
 
         .tabs {
             display: flex;
@@ -631,7 +701,6 @@
         body.theme-cherry .bulk-progress-fill { background: linear-gradient(90deg, #ff4470, #ff6b8a, #ff4470); background-size: 300% 100%; animation: bulkShimmer 4s ease-in-out infinite; }
         body.theme-cherry .bulk-progress-fill.ready { background: linear-gradient(90deg, #fbbf24, #f59e0b, #d97706); background-size: 200% 100%; animation: bulkShimmer 2s ease-in-out infinite; }
 
-        /* ====== ГЕОМЕТРИЧЕСКИЕ ТЕМЫ (с цветным фоном, чтобы эффект был виден) ====== */
         body.theme-geometric { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); }
         body.theme-geometric .container { background: rgba(20, 25, 50, 0.92); border: 1px solid rgba(100, 150, 255, 0.15); color: #d0d8ff; }
         body.theme-geometric button:not(.theme-main-btn):not(.rgb-toggle):not(.buy-item-btn):not(.del-item-btn):not(.qty-btn):not(.tab-btn) { background: #2a4a7a; color: white; }
@@ -700,7 +769,7 @@
         <div class="header">
             <h1>КОПИЛКА</h1>
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button id="rgbToggleBtn" class="rgb-toggle">RGB режим</button>
+                <button id="rgbToggleBtn" class="rgb-toggle">🌈 RGB режим</button>
                 <div class="theme-dropdown">
                     <button id="themeMenuBtn" class="theme-main-btn">Темы ▼</button>
                     <div id="themeMenu" class="theme-menu hidden">
@@ -713,7 +782,7 @@
                         <button data-theme="desert">Пустыня</button>
                         <button data-theme="marlboro">Marlboro</button>
                         <button data-theme="sakura">🌸Сакура</button>
-                        <button data-theme="midnight">Полночь</button>
+                        <button data-theme="midnight">🌙Полночь</button>
                         <button data-theme="aurora">Северное сияние</button>
                         <button data-theme="lavender">Лаванда</button>
                         <button data-theme="cherry">Вишня</button>
@@ -722,7 +791,7 @@
                         <button data-theme="dots">Точки</button>
                         <button data-theme="stripes">Полосы</button>
                         <button data-theme="triangles">Треугольники</button>
-                        <button id="createCustomThemeBtn" style="background: #f59e0b; color:#1e1a2f;">✨ Создать свою тему</button>
+                        <button id="createCustomThemeBtn" style="background: #f59e0b; color:#1e1a2f;">Создать свою тему</button>
                     </div>
                 </div>
             </div>
@@ -731,7 +800,7 @@
         <div class="tabs">
             <button class="tab-btn active" data-tab="main">Основное</button>
             <button class="tab-btn" data-tab="bulk">Массовые покупки</button>
-            <button class="tab-btn" data-tab="author">Автор</button>
+            <button class="tab-btn" data-tab="author">👤 Автор</button>
         </div>
 
         <!-- Вкладка Основное -->
@@ -820,22 +889,22 @@
         <!-- Вкладка Автор -->
         <div id="tab-author" class="tab-content">
             <div class="author-section">
-                <div class="avatar">NekoSploit</div>
+                <div class="avatar">By NekoSploit</div>
                 <h3>Автор проекта</h3>
-                <p>Создано с для удобного управления финансами</p>
+                <p>Создано от души для удобного управления финансами</p>
                 <p style="font-size: 14px; opacity: 0.6;">Благодарю за использование! Если вам понравилось — поддержите звёздочкой на GitHub ⭐</p>
                 <div class="author-links">
                     <a href="https://github.com/ExploitRunner2" target="_blank" rel="noopener noreferrer">
-                        <span class="link-icon">🐙</span> GitHub
+                        <span class="link-icon">on</span> GitHub
                     </a>
                     <a href="https://www.youtube.com/@Kayako_San" target="_blank" rel="noopener noreferrer">
-                        <span class="link-icon">▶️</span> YouTube
+                        <span class="link-icon">on</span> YouTube
                     </a>
                     <a href="https://t.me/Kayako_San" target="_blank" rel="noopener noreferrer">
-                        <span class="link-icon">✈️</span> Telegram
+                        <span class="link-icon">on</span> Telegram
                     </a>
                     <a href="https://vk.com/kayako_san" target="_blank" rel="noopener noreferrer">
-                        <span class="link-icon">📘</span> VK
+                        <span class="link-icon">on</span> VK
                     </a>
                 </div>
             </div>
@@ -1234,12 +1303,16 @@
         }
         function setTheme(themeName) {
             stopAllEffects();
-            const themes = ['light', 'dark', 'sunset', 'ocean', 'forest', 'cosmic', 'desert', 'marlboro', 'sakura', 
-                           'midnight', 'aurora', 'lavender', 'cherry', 'geometric', 'waves', 'dots', 'stripes', 'triangles'];
-            themes.forEach(t => document.body.classList.remove(`theme-${t}`));
+            // Сначала убираем все классы тем
+            const allThemes = ['light', 'dark', 'sunset', 'ocean', 'forest', 'cosmic', 'desert', 'marlboro', 'sakura', 
+                              'midnight', 'aurora', 'lavender', 'cherry', 'geometric', 'waves', 'dots', 'stripes', 'triangles', 'custom'];
+            allThemes.forEach(t => document.body.classList.remove(`theme-${t}`));
+            
             if(themeName !== 'custom') {
                 document.body.classList.add(`theme-${themeName}`);
                 if(themeName === 'sakura') startSakuraEffect();
+            } else {
+                document.body.classList.add('theme-custom');
             }
             localStorage.setItem('piggyTheme', themeName);
         }
@@ -1299,9 +1372,9 @@
                     enableParticles: modal.querySelector('#enableParticles').checked
                 };
                 stopAllEffects();
-                const themes = ['light', 'dark', 'sunset', 'ocean', 'forest', 'cosmic', 'desert', 'marlboro', 'sakura', 
-                               'midnight', 'aurora', 'lavender', 'cherry', 'geometric', 'waves', 'dots', 'stripes', 'triangles'];
-                themes.forEach(t => document.body.classList.remove(`theme-${t}`));
+                const allThemes = ['light', 'dark', 'sunset', 'ocean', 'forest', 'cosmic', 'desert', 'marlboro', 'sakura', 
+                                  'midnight', 'aurora', 'lavender', 'cherry', 'geometric', 'waves', 'dots', 'stripes', 'triangles'];
+                allThemes.forEach(t => document.body.classList.remove(`theme-${t}`));
                 document.body.classList.add('theme-custom');
                 if(data.bgImg) document.body.style.background = `url('${data.bgImg}') center/cover fixed`;
                 else document.body.style.background = data.bgColor;
@@ -1366,7 +1439,17 @@
             }
         }
         
-        function toggleRGB() { document.body.classList.toggle('rgb-mode'); const btn = document.getElementById('rgbToggleBtn'); if(document.body.classList.contains('rgb-mode')) btn.textContent = 'RGB вкл'; else btn.textContent = 'RGB режим'; }
+        function toggleRGB() { 
+            document.body.classList.toggle('rgb-mode'); 
+            const btn = document.getElementById('rgbToggleBtn'); 
+            if(document.body.classList.contains('rgb-mode')) {
+                btn.textContent = '🔴 RGB вкл';
+                btn.classList.add('active');
+            } else {
+                btn.textContent = '🌈 RGB режим';
+                btn.classList.remove('active');
+            }
+        }
         
         document.addEventListener('DOMContentLoaded', () => {
             loadData(); loadTheme();
